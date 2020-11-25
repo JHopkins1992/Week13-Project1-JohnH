@@ -3,11 +3,50 @@
 
 The files in this repository were used to configure the network depicted below.
 
-![TODO: Update the path with the name of your diagram](Images/diagram_filename.png)
+![Security](Diagrams/CloudSecurityDiagram.jpg)
 
-These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the _____ file may be used to install only certain pieces of it, such as Filebeat.
+These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the Playbook file may be used to install only certain pieces of it, such as Filebeat.
 
-  - _TODO: Enter the playbook file._ install-elk.yml
+```yml
+---
+- name: Configure Elk VM with Docker
+  hosts: elk
+  become: true
+  tasks:
+    # Use apt module
+    - name: Install docker.io
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        name: docker.io
+        state: present
+      # Use apt module
+    - name: Install python3-pip
+      apt:
+        force_apt_get: yes
+        name: python3-pip
+        state: present
+      # Use pip module (It will default to pip3)
+    - name: Install Docker module
+      pip:
+        name: docker
+        state: present                                                                                                                                       >    - name: Increase virtual memory
+      command: sysctl -w vm.max_map_count=262144                                                                                                             >        name: vm.max_map_count
+        value: "262144"
+        state: present
+        reload: yes
+      # Use docker_container module
+    - name: download and launch a docker elk container
+      docker_container:
+        name: elk
+        image: sebp/elk:761
+        state: started
+        restart_policy: always
+        # Please list the ports that ELK runs on
+        published_ports:                                                                                                                                                -  5601:5601                                                                                                                                                  -  9200:9200                                                                                                                                                  -  5044:5044
+  - 
+  -
+  ```
 
 This document contains the following details:
 - Description of the Topology
@@ -20,9 +59,9 @@ This document contains the following details:
 
 ### Description of the Topology
 
-The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the D*mn Vulnerable Web Application.
+The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the Damn Vulnerable Web Application.
 
-Load balancing ensures that the application will be highly _____Available, in addition to restricting _____Traffic to the network.
+Load balancing ensures that the application will be highly Available, in addition to restricting Traffic to the network.
 - _TODO: What aspect of security do load balancers protect? What is the advantage of a jump box?_Availability
 
 Load Balancing is an important security role as computing moves more to the cloud. The off-loading function of a load balancer defends an organization against distributed denial-of-service (DDoS) attacks. It does this by shifting attack traffic from the corporate server to a public cloud provider.
@@ -99,7 +138,7 @@ Metricbeat collects metrics and statistics
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
-- Copy the _____yml file to _____ansible folder.
+- Copy the yml file to ansible folder.
 - Update the _____config file to include...
 - Run the playbook, and navigate to ____Kibana to check that the installation worked as expected.
 
@@ -110,4 +149,5 @@ _TODO: Answer the following questions to fill in the blanks:_
   http://40.79.31.186:5601/app/kibana#/home
   
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
+
 
