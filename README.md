@@ -62,19 +62,19 @@ This document contains the following details:
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the Damn Vulnerable Web Application.
 
 Load balancing ensures that the application will be highly Available, in addition to restricting Traffic to the network.
-- _TODO: What aspect of security do load balancers protect? What is the advantage of a jump box?_Availability
+-  What aspect of security do load balancers protect? What is the advantage of a jump box? Availability
 
-Load Balancing is an important security role as computing moves more to the cloud. The off-loading function of a load balancer defends an organization against distributed denial-of-service (DDoS) attacks. It does this by shifting attack traffic from the corporate server to a public cloud provider.
+-  Load Balancing is an important security role as computing moves more to the cloud. The off-loading function of a load balancer defends an organization against distributed denial-of-service (DDoS) attacks. It does this by shifting attack traffic from the corporate server to a public cloud provider.
 
-When a jump box is used, its hidden benefit is that any tools in place for the SAN system are maintained on that single system. Therefore, when an update to the SAN management software is available, only a single system requires the update.
+-  When a jump box is used, its hidden benefit is that any tools in place for the SAN system are maintained on that single system. Therefore, when an update to the SAN management software is available, only a single system requires the update.
 
-Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the _____Logs and system _____Traffic.
-- _TODO: What does Filebeat watch for?_Log files and log events. Filebeat is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
+Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the Logs and system Traffic.
+- What does Filebeat watch for?_Log files and log events. Filebeat is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
 
-- _TODO: What does Metricbeat record?_Metricbeat is a lightweight shipper that you can install on your servers to periodically collect metrics from the operating system and from services running on the server. Metricbeat takes the metrics and statistics that it collects and ships them to the output that you specify, such as Elasticsearch or Logstash.
+- What does Metricbeat record?_Metricbeat is a lightweight shipper that you can install on your servers to periodically collect metrics from the operating system and from services running on the server. Metricbeat takes the metrics and statistics that it collects and ships them to the output that you specify, such as Elasticsearch or Logstash.
 
 The configuration details of each machine may be found below.
-_Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table_.
+Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table.
 
 | Name     | Function  | IP Address | Operating System |   |
 |----------|-----------|------------|------------------|---|
@@ -87,11 +87,11 @@ _Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdow
 
 The machines on the internal network are not exposed to the public Internet. 
 
-Only the _____Jump-Box-Provisioner__ machine can accept connections from the Internet. Access to this machine is only allowed from the following IP addresses:
-- _TODO: Add whitelisted IP addresses_
+Only the Jump-Box-Provisioner machine can accept connections from the Internet. Access to this machine is only allowed from the following IP addresses:
+- Add whitelisted IP addresses_
 
-Machines within the network can only be accessed by _____Jump-Box through SSH.__
-- _TODO: Which machine did you allow to access your ELK VM? What was its IP address?_
+Machines within the network can only be accessed by Jump-Box through SSH.
+- Which machine did you allow to access your ELK VM? What was its IP address?
 
 A summary of the access policies in place can be found in the table below.
 
@@ -108,44 +108,45 @@ Ansible was used to automate configuration of the ELK machine. No configuration 
 - _TODO: What is the main advantage of automating configuration with Ansible?_You can put a command from multiple servers into a single playbook.
 
 The playbook implements the following tasks:
-- _TODO: In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Docker; download image; etc._
-- ...install docker io
-- ...python pip
-- ...install docker
-- ...systemctl -w vm.max_map_count=26144
+- In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Docker; download image; etc.
+- install docker io
+- python pip
+- install docker
+- systemctl -w vm.max_map_count=26144
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-![TODO: Update the path with the name of your screenshot of docker ps output](Images/docker_ps_output.png)
+![Screenshot](Diagrams/docker_ps.jpg)
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
-- _TODO: List the IP addresses of the machines you are monitoring_
-- ... Web-1 10.1.0.5
-- ... Web-2 10.1.0.6
+- List the IP addresses of the machines you are monitoring_
+- Web-1 10.1.0.5
+- Web-2 10.1.0.6
 
 We have installed the following Beats on these machines:
-- _TODO: Specify which Beats you successfully installed_
-- ...Filebeat
-- ...Metricbeat
+- Specify which Beats you successfully installed_
+- Filebeat
+- Metricbeat
 
 These Beats allow us to collect the following information from each machine:
-- _TODO: In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc._ 
-Filebeat collects the changes that have been made. 
-Metricbeat collects metrics and statistics
+- In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc.
+
+-  Filebeat collects the changes that have been made. 
+-  Metricbeat collects metrics and statistics
 
 ### Using the Playbook
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
 - Copy the yml file to ansible folder.
-- Update the _____config file to include...
-- Run the playbook, and navigate to ____Kibana to check that the installation worked as expected.
+- Update the config file to include...
+- Run the playbook, and navigate to Kibana to check that the installation worked as expected.
 
-_TODO: Answer the following questions to fill in the blanks:_
-- _Which file is the playbook? Where do you copy it?_File beat config file /etc/ansible/files/
-- _Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_edit etc host file to webservers/elk server ip addresses
-- _Which URL do you navigate to in order to check that the ELK server is running?
+_Answer the following questions to fill in the blanks:_
+- Which file is the playbook? Where do you copy it?_File beat config file /etc/ansible/files/
+- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on?_edit etc host file to webservers/elk server ip addresses
+- Which URL do you navigate to in order to check that the ELK server is running?
   http://40.79.31.186:5601/app/kibana#/home
   
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
