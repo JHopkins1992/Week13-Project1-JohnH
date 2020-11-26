@@ -9,43 +9,36 @@ These files have been tested and used to generate a live ELK deployment on Azure
 
 ```yml
 ---
-- name: Configure Elk VM with Docker
+- name: Installing and launching filebeat
   hosts: elk
-  become: true
+  become: yes
   tasks:
-    # Use apt module
-    - name: Install docker.io
-      apt:
-        update_cache: yes
-        force_apt_get: yes
-        name: docker.io
-        state: present
-      # Use apt module
-    - name: Install python3-pip
-      apt:
-        force_apt_get: yes
-        name: python3-pip
-        state: present
-      # Use pip module (It will default to pip3)
-    - name: Install Docker module
-      pip:
-        name: docker
-        state: present                                                                                                                                       >    - name: Increase virtual memory
-      command: sysctl -w vm.max_map_count=262144                                                                                                             >        name: vm.max_map_count
-        value: "262144"
-        state: present
-        reload: yes
-      # Use docker_container module
-    - name: download and launch a docker elk container
-      docker_container:
-        name: elk
-        image: sebp/elk:761
-        state: started
-        restart_policy: always
-        # Please list the ports that ELK runs on
-        published_ports:                                                                                                                                                -  5601:5601                                                                                                                                                  -  9200:9200                                                                                                                                                  -  5044:5044
-  - 
-  -
+
+    # Use command module
+  - name: Download filebeat deb
+    command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+
+    # Use command module
+  - name: Install filebeat deb
+    command: dpkg -i filebeat-7.6.1-amd64.deb
+
+    # Use copy module
+  - name: Drop in filebeat.yml
+    copy:
+      src: /etc/ansible/files/filebeat-config.yml
+      dest: /etc/filebeat/filebeat.yml
+ 
+    # Use command module
+  - name: Enable and configure system module
+    command: filebeat modules enable logstash
+
+    # Use command module
+  - name: Setup filebeat
+    command: filebeat setup
+
+    # Use command module
+  - name: Start filebeat service
+    command: sudo service filebeat start
   ```
 
 This document contains the following details:
@@ -62,16 +55,17 @@ This document contains the following details:
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the Damn Vulnerable Web Application.
 
 Load balancing ensures that the application will be highly Available, in addition to restricting Traffic to the network.
--  What aspect of security do load balancers protect? What is the advantage of a jump box? Availability
+  
+  What aspect of security do load balancers protect? What is the advantage of a jump box?
 
 -  Load Balancing is an important security role as computing moves more to the cloud. The off-loading function of a load balancer defends an organization against distributed denial-of-service (DDoS) attacks. It does this by shifting attack traffic from the corporate server to a public cloud provider.
 
 -  When a jump box is used, its hidden benefit is that any tools in place for the SAN system are maintained on that single system. Therefore, when an update to the SAN management software is available, only a single system requires the update.
 
 Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the Logs and system Traffic.
-- What does Filebeat watch for? Log files and log events. Filebeat is a lightweight shipper for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
+- What does Filebeat watch for? Filebeat is used for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
 
-- What does Metricbeat record? Metricbeat is a lightweight shipper that you can install on your servers to periodically collect metrics from the operating system and from services running on the server. Metricbeat takes the metrics and statistics that it collects and ships them to the output that you specify, such as Elasticsearch or Logstash.
+- What does Metricbeat record? Metricbeat can be installed on your servers to periodically collect metrics from the operating system and from services running on the server. Metricbeat takes the metrics and statistics that it collects and ships them to the output that you specify, such as Elasticsearch or Logstash.
 
 The configuration details of each machine may be found below.
 Note: Use the [Markdown Table Generator](http://www.tablesgenerator.com/markdown_tables) to add/remove values from the table.
@@ -121,34 +115,47 @@ The following screenshot displays the result of running `docker ps` after succes
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
 - List the IP addresses of the machines you are monitoring:
-- Web-1 10.1.0.5
-- Web-2 10.1.0.6
+- Web-1: 10.1.0.5
+- Web-2: 10.1.0.6
+- Elk: 10.2.0.4
 
 We have installed the following Beats on these machines:
-- Specify which Beats you successfully installed:
+  Specify which Beats you successfully installed:
 - Filebeat
 - Metricbeat
 
 These Beats allow us to collect the following information from each machine:
-- In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc.
+  
+  In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc.
 
--  Filebeat collects the changes that have been made. 
--  Metricbeat collects metrics and statistics
+-  Filebeat monitors the log files or locations that you specify, such as Syslogs, visualized by Kibana below.
+  ![Screenshot](Diagrams/Filebeat_Diagram.jpg)
+-  Metricbeat: Metricbeat monitors the metrics and statistics of the operating system, such as CPU usage, visualized by Kibana below.
+  ![Screenshot](Diagrams/Metricbeat_Diagram.jpg)
 
 ### Using the Playbook
 In order to use the playbook, you will need to have an Ansible control node already configured. Assuming you have such a control node provisioned: 
 
 SSH into the control node and follow the steps below:
 - Copy the yml file to ansible folder.
-- Update the config file to include...
-- Run the playbook, and navigate to Kibana to check that the installation worked as expected.
+- Update the config file to include remote users, host ip address, and published ports.
+- Run the playbook, and navigate to the Kibana to check that the installation worked as expected.
 
 Answer the following questions to fill in the blanks:
-- Which file is the playbook? Where do you copy it? Filebeat config file /etc/ansible/files/
-- Which file do you update to make Ansible run the playbook on a specific machine? How do I specify which machine to install the ELK server on versus which to install Filebeat on? edit etc host file to webservers/elk server ip addresses
+- Which file is the playbook? .yml file
+- Where do you copy it? /etc/ansible, /etc/ansible/files, and /etc/ansible/roles depending on the .yml file.
+- Which file do you update to make Ansible run the playbook on a specific machine? /etc/ansible/hosts and /etc/ansible/ansible.cfg.
+- How do I specify which machine to install the ELK server on versus which to install Filebeat on? Edit the /etc/ansible/hosts file with the approriate IP addresses.
 - Which URL do you navigate to in order to check that the ELK server is running?
-  http://40.79.31.186:5601/app/kibana#/home
+  http://<local.host>:5601/app/kibana#/home
   
 _As a **Bonus**, provide the specific commands the user will need to run to download the playbook, update the files, etc._
 
+- nano /etc/ansible/ansible.cfg
+- nano /etc/ansible/hosts
+- ansible all -m ping
+- nano <your-playbook.yml>
+- ansible-playbook <your-playbook.yml>
+- ssh ansible@<XX.X.X.X>
+- curl <local.host>/setup.php
 
