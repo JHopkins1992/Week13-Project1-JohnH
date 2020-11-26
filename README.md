@@ -60,7 +60,7 @@ Load balancing ensures that the application will be highly Available, in additio
 
 -  Load Balancing is an important security role as computing moves more to the cloud. The off-loading function of a load balancer defends an organization against distributed denial-of-service (DDoS) attacks. It does this by shifting attack traffic from the corporate server to a public cloud provider.
 
--  When a jump box is used, its hidden benefit is that any tools in place for the SAN system are maintained on that single system. Therefore, when an update to the SAN management software is available, only a single system requires the update.
+-  A Jump Box is used to control the access to other machines that its connected to by allowing specific IP addresses to connect it, then it forwards those connections to their designated machines.
 
 Integrating an ELK server allows users to easily monitor the vulnerable VMs for changes to the Logs and system Traffic.
 - What does Filebeat watch for? Filebeat is used for forwarding and centralizing log data. Installed as an agent on your servers, Filebeat monitors the log files or locations that you specify, collects log events, and forwards them either to Elasticsearch or Logstash for indexing.
@@ -95,7 +95,7 @@ A summary of the access policies in place can be found in the table below.
 
 | Name     | Publicly Accessible | Allowed IP Address |   |
 |----------|---------------------|--------------------|---|
-| Jump Box | Yes                 | 73.12.XX.XXX/32      |   |
+| Jump Box | Yes                 | 73.12.XX.XXX/32    |   |
 | Web-1    | No                  | 10.1.0.5           |   |
 | Web-2    | No                  | 10.1.0.6           |   |
 | ELK-VM   | No                  | 10.2.0.4           |   |
@@ -116,7 +116,7 @@ In 3-5 bullets, explain the steps of the ELK installation play. E.g., install Do
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-![Screenshot](Diagrams/docker_ps.jpg)
+![Screenshot](Diagrams/docker_ps1.jpg)
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following machines:
@@ -135,9 +135,13 @@ These Beats allow us to collect the following information from each machine:
   
   In 1-2 sentences, explain what kind of data each beat collects, and provide 1 example of what you expect to see. E.g., `Winlogbeat` collects Windows logs, which we use to track user logon events, etc.
 
--  Filebeat monitors the log files or locations that you specify, such as Syslogs, visualized by Kibana below.
+-  Filebeat monitors the log files or locations that you specify, such as Syslogs, shown by Kibana below.
+
+
   ![Screenshot](Diagrams/Filebeat_Diagram.jpg)
--  Metricbeat: Metricbeat monitors the metrics and statistics of the operating system, such as CPU usage, visualized by Kibana below.
+-  Metricbeat: Metricbeat monitors the metrics and statistics of the operating system, such as CPU usage, shown by Kibana below.
+
+
   ![Screenshot](Diagrams/Metricbeat_Diagram.jpg)
 
 ### Using the Playbook
@@ -146,13 +150,13 @@ In order to use the playbook, you will need to have an Ansible control node alre
 SSH into the control node and follow the steps below:
 - Copy the yml file to ansible folder.
 - Update the config file to include remote users, host ip address, and published ports.
-- Run the playbook, and navigate to the Kibana to check that the installation worked as expected.
+- Run the playbook, and navigate to the Kibana to check that the installation has worked as expected.
 
 Answer the following questions to fill in the blanks:
 - Which file is the playbook? .yml file
 - Where do you copy it? /etc/ansible, /etc/ansible/files, and /etc/ansible/roles depending on the .yml file.
 - Which file do you update to make Ansible run the playbook on a specific machine? /etc/ansible/hosts and /etc/ansible/ansible.cfg.
-- How do I specify which machine to install the ELK server on versus which to install Filebeat on? Edit the /etc/ansible/hosts file with the approriate IP addresses.
+- How do I specify which machine to install the ELK server on versus which to install Filebeat on? You can specify which machine by editing the /etc/ansible/hosts file with the approriate IP addresses.
 - Which URL do you navigate to in order to check that the ELK server is running?
   http://<local.host>:5601/app/kibana#/home
   
